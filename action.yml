@@ -26,6 +26,10 @@ inputs:
     required: true
     default: true
   archive:
+    description: 'If true, will archive the asset'
+    required: true
+    default: true
+  archive_types:
     description: 'Comma separated archive types (eg. "zip,tar.gz")'
     required: false
   archive_include:
