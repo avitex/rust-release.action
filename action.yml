@@ -1,0 +1,36 @@
+name: 'rust-release'
+description: 'Build Rust binaries and push to Github release'
+inputs:
+  token:
+    description: 'Github Token'
+    required: true
+  target:
+    description: 'Rust target triple'
+    required: true
+  profile:
+    description: 'Rust profile'
+    required: true
+    default: release
+  binary:
+    description: 'Binary to build'
+    required: false
+  asset:
+    description: 'Asset name'
+    required: false
+  asset_format:
+    description: 'Release asset file name format'
+    required: true
+    default: '{binary.name}-{target}{extension}'
+  asset_digest:
+    description: 'If true, will upload sha256 asset digest'
+    required: true
+    default: true
+  archive:
+    description: 'Comma separated archive types (eg. 'zip,tar.gz')'
+    required: false
+  archive_include:
+    description: 'Files to include in archive'
+    required: false
+runs:
+  using: 'node16'
+  main: 'index.js'
