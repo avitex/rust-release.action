@@ -26,7 +26,7 @@ inputs:
     required: true
     default: true
   archive:
-    description: 'Comma separated archive types (eg. 'zip,tar.gz')'
+    description: 'Comma separated archive types (eg. "zip,tar.gz")'
     required: false
   archive_include:
     description: 'Files to include in archive'
