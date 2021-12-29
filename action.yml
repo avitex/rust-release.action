@@ -6,7 +6,7 @@ inputs:
     required: true
   target:
     description: 'Rust target triple'
-    required: true
+    required: false
   profile:
     description: 'Rust profile'
     required: true
