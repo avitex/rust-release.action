@@ -1,4 +1,5 @@
 import { createHash } from 'crypto';
+import { readFileSync } from 'fs';
 
 import * as core from '@actions/core';
 import * as github from '@actions/github';
@@ -17,7 +18,7 @@ import { build } from './build.js';
 // }
 
 async function uploadAsset(octokit, repo, release, path, name, digest) {
-  const data = fs.readFileSync(path);
+  const data = readFileSync(path);
 
   await octokit.rest.repos.uploadReleaseAsset({
     data, 
