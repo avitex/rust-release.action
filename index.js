@@ -1,11 +1,9 @@
-import { createHash } from 'crypto';
-import { readFileSync } from 'fs';
-
 import * as core from '@actions/core';
 import * as github from '@actions/github';
 import { single as format } from 'paraphrase';
 
-import { build } from './build.js';
+import { build } from './lib/build.js';
+import { uploadAsset } from './lib/upload.js';
 
 // function archiveTarGzip(files, output) {
 //   await tar.c(
@@ -16,32 +14,6 @@ import { build } from './build.js';
 //     files
 //   )
 // }
-
-async function uploadAsset(octokit, repo, release, path, name, digest) {
-  const data = readFileSync(path, { encoding: ''});
-
-  await octokit.rest.repos.uploadReleaseAsset({
-    data, 
-    name,
-    repo: repo.repo,
-    owner: repo.owner,
-    release_id: release.id,
-  });
-
-  if (digest) {
-    const digest = createHash('sha256').update(data).digest('hex');
-    const digestData = `${digest}  ${name}\n`;
-    const digestName = `${name}.sha256`;
-
-    await octokit.rest.repos.uploadReleaseAsset({
-      data: digestData, 
-      name: digestName,
-      repo: repo.repo,
-      owner: repo.owner,
-      release_id: release.id,
-    });
-  }
-}
 
 function getArchiveInput() {
   const types = core.getInput('archive');
@@ -108,7 +80,7 @@ try {
   
   const octokit = github.getOctokit(inputs.githubToken);
 
-  core.startGroup('build');
+  core.startGroup('Build binary');
   const { output, binary, profile, target, extension } = build({
     pkg: inputs.pkg,
     binary: inputs.binary,
@@ -137,10 +109,6 @@ try {
     }
   }
 
-  core.startGroup('upload');
-  uploadAsset(octokit, github.context.repo, release, output, asset.name, asset.digest);
-  core.endGroup();
-
   // TODO: archive
   // for(const asset of output.assets) {
   //   let assetPath = asset.path;
@@ -151,6 +119,11 @@ try {
   //     uploadAsset(octokit, github.context.repo, release, asset.path, asset.name, assetDigest)
   //   }
   // }
+
+  core.startGroup('Upload release assets');
+  await uploadAsset(octokit, github.context.repo, release, output, asset.name, asset.digest);
+  core.endGroup();
+
 } catch (error) {
   core.setFailed(error.message);
 }
