@@ -18,7 +18,7 @@ import { build } from './build.js';
 // }
 
 async function uploadAsset(octokit, repo, release, path, name, digest) {
-  const data = readFileSync(path);
+  const data = readFileSync(path, { encoding: ''});
 
   await octokit.rest.repos.uploadReleaseAsset({
     data, 
@@ -29,7 +29,7 @@ async function uploadAsset(octokit, repo, release, path, name, digest) {
   });
 
   if (digest) {
-    const digest = createHash('sha256').update(path).digest('hex');
+    const digest = createHash('sha256').update(data).digest('hex');
     const digestData = `${digest}  ${name}\n`;
     const digestName = `${name}.sha256`;
 
