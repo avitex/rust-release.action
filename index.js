@@ -77,7 +77,7 @@ try {
     }
 
     for (const type of archiveTypes) {
-      assets.push(archiveAssets(type, binaryPath, archiveInclude));
+      assets.push(await archiveAssets(type, binaryPath, archiveInclude));
     }
 
     core.endGroup();
